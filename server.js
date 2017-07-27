@@ -21,13 +21,11 @@ wsServer = new WebSocketServer({
 wsServer.on('request', function(request) {
   var connection = request.accept(null, request.origin);
 
-  // This is the most important callback for us, we'll handle
-  // all messages from users here.
+  //connection event handler
   connection.on('message', function(message) {
-    console.log("tick!");
     var msg = JSON.parse(message.utf8Data);
     fs.writeFile('/home/ten/aaa.c', msg.source, (err) => {if (err) console.log(err) } );
-    
+    //compile source and execute output program
     exec('cd && gcc aaa.c', (err, stdout, stderr) => {
       if (err) {
         console.log(err);
