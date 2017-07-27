@@ -33,7 +33,6 @@
                 if ( websocket != null && document.getElementById("name").value != "" && document.getElementById("inputText").value != "")
                 {
                     console.log("send");
-                    document.getElementById("inputText").value = "";
                     websocket.send( JSON.stringify(msg) );
                     console.log( msg );
                     console.log(JSON.stringify(msg));
