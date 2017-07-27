@@ -2,6 +2,8 @@ var WebSocketServer = require('websocket').server;
 
 const { exec } = require('child_process');
 
+var fs = require('fs');
+
 var http = require('http');
 
 var server = http.createServer(function(request, response) {
@@ -22,17 +24,24 @@ wsServer.on('request', function(request) {
   // This is the most important callback for us, we'll handle
   // all messages from users here.
   connection.on('message', function(message) {
-    exec('cd &&  ./a.out', (err, stdout, stderr) => {
+    var msg = JSON.parse(message.utf8Data);
+    fs.writeFile('/home/ten/aaa.c', msg.text, (err) => {if (err) console.log(err) } );
+    
+    exec('cd && gcc aaa.c', (err, stdout, stderr) => {
       if (err) {
-        // node couldn't execute the command
+        console.log(err);
+        msg.text = stdout;
+        connection.sendUTF(JSON.stringify(msg));
         return;
       }
-      console.log(`stdout: ${stdout}`);
-      console.log(`stderr: ${stderr}`);
-      
-      var msg = JSON.parse(message.utf8Data);
-      msg.text = stdout;
-      connection.sendUTF(JSON.stringify(msg));
+      exec('cd &&  ./a.out', (err, stdout, stderr) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        msg.text = stdout;
+        connection.sendUTF(JSON.stringify(msg));
+      });
     });
   });
 
