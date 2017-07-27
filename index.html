@@ -14,7 +14,7 @@
         </p>
         <p>
         Language
-        <input type="text" id="launguage" style="width: 10%" />
+        <input type="text" id="language" style="width: 10%" value="C"/>
         </p>
 
         <script type="text/javascript">
@@ -25,24 +25,11 @@
             }
 
             function sendMessage() {
-                initWebSocket()
-                .then(() => {
-                    var msg = {
-                        language : document.getElementById("language").value,
-                        source : document.getElementById("source").value
-                    }
-                    if ( websocket != null && document.getElementById("language").value != "" && document.getElementById("source").value != "") {
-                        console.log("send");
-                        websocket.send( JSON.stringify(msg) );
-                        console.log( msg );
-                        console.log(JSON.stringify(msg));
-                    }
-                })
-                .finally(stopWebSocket);
+                initWebSocket();
             }
-            var websocket = null;
 
             function initWebSocket() {
+                var websocket = null;
                 try {
                     if (typeof MozWebSocket == 'function')
                         WebSocket = MozWebSocket;
@@ -50,18 +37,24 @@
                         websocket.close();
                     websocket = new WebSocket( "ws://127.0.0.1:8080" );
                     websocket.onopen = function (evt) {
-                        debug("CONNECTED");
+                        var msg = {
+                            language : document.getElementById("language").value,
+                            source : document.getElementById("source").value
+                        }
+                        if ( websocket != null && document.getElementById("language").value != "" && document.getElementById("source").value != "") {
+                            console.log("send");
+                            websocket.send( JSON.stringify(msg) );
+                            console.log( msg );
+                            console.log(JSON.stringify(msg));
+                        }
                     };
                     websocket.onclose = function (evt) {
                         debug("DISCONNECTED");
                     };
                     websocket.onmessage = function (evt) {
+                        console.log("recived");
                         var msg = JSON.parse(evt.data);
-                        console.log( "Message received :", msg );
-                        if (msg.id == document.getElementById("name").value)
-                            debug( msg.text );
-                        else
-                            debug( msg.id + " : " + msg.text );
+                        debug( msg.source );
                     };
                     websocket.onerror = function (evt) {
                         debug('ERROR: ' + evt.data);
@@ -69,11 +62,6 @@
                 } catch (exception) {
                     debug('ERROR: ' + exception);
                 }
-            }
-
-            function stopWebSocket() {
-                if (websocket)
-                    websocket.close();
             }
 
             function checkSocket() {
