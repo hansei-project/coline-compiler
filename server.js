@@ -37,7 +37,7 @@ wsServer.on('request', function(request) {
     }
     fs.writeFile('/home/ten/aaa.' + extention, msg.source, (err) => {if (err) console.log(err) } );
     //compile source and execute output program
-    exec('cd && ' + command + ' aaa -o a.out', (err, stdout, stderr) => {
+    exec('cd && ' + command + ' aaa' + extention + ' -o a.out', (err, stdout, stderr) => {
       if (err) {
         console.log(err);
         msg.source = stderr;
