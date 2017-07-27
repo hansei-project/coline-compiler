@@ -26,11 +26,16 @@ wsServer.on('request', function(request) {
     var msg = JSON.parse(message.utf8Data);
     var lang = msg.language;
     var command = null;
-    if (lang == 'C')
+    var extention = null;
+    if (lang == 'C') {
       command = 'gcc';
-    else if (lang == 'Haskell')
+      extention = 'c';
+    }
+    else if (lang == 'Haskell'){
       command = 'ghc';
-    fs.writeFile('/home/ten/aaa', msg.source, (err) => {if (err) console.log(err) } );
+      extention = 'hs';
+    }
+    fs.writeFile('/home/ten/aaa.' + extention, msg.source, (err) => {if (err) console.log(err) } );
     //compile source and execute output program
     exec('cd && ' + command + ' aaa -o a.out', (err, stdout, stderr) => {
       if (err) {
