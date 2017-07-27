@@ -30,7 +30,7 @@ wsServer.on('request', function(request) {
     exec('cd && gcc aaa.c', (err, stdout, stderr) => {
       if (err) {
         console.log(err);
-        msg.text = stdout;
+        msg.source = stdout;
         connection.sendUTF(JSON.stringify(msg));
         return;
       }
@@ -39,7 +39,7 @@ wsServer.on('request', function(request) {
           console.log(err);
           return;
         }
-        msg.text = stdout;
+        msg.source = stdout;
         connection.sendUTF(JSON.stringify(msg));
       });
     });
