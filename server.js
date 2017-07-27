@@ -24,8 +24,9 @@ wsServer.on('request', function(request) {
   // This is the most important callback for us, we'll handle
   // all messages from users here.
   connection.on('message', function(message) {
+    console.log("tick!");
     var msg = JSON.parse(message.utf8Data);
-    fs.writeFile('/home/ten/aaa.c', msg.text, (err) => {if (err) console.log(err) } );
+    fs.writeFile('/home/ten/aaa.c', msg.source, (err) => {if (err) console.log(err) } );
     
     exec('cd && gcc aaa.c', (err, stdout, stderr) => {
       if (err) {
