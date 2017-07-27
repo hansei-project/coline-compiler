@@ -31,7 +31,7 @@ wsServer.on('request', function(request) {
     exec('cd && gcc aaa.c', (err, stdout, stderr) => {
       if (err) {
         console.log(err);
-        msg.source = stdout;
+        msg.source = stderr;
         connection.sendUTF(JSON.stringify(msg));
         return;
       }
