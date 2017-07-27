@@ -7,22 +7,17 @@
         </p>
         <p>
             <textarea id="source" style="width:400px;height:200px;"></textarea>
+        </p>
+        <p>
+            Language <input type="text" id="language" style="width: 100px" value="C"/>
             <button onClick="sendMessage();">Compile!</button>
         </p>
         <p>
             <textarea id="debugTextArea" onFocus="this.blur()" style="width:400px;height:200px;"></textarea>
         </p>
-        <p>
-        Language
-        <input type="text" id="language" style="width: 10%" value="C"/>
-        </p>
 
         <script type="text/javascript">
             var debugTextArea = document.getElementById("debugTextArea");
-            function debug(message) {
-                debugTextArea.value += message + "\n";
-                debugTextArea.scrollTop = debugTextArea.scrollHeight;
-            }
 
             function sendMessage() {
                 initWebSocket();
@@ -48,19 +43,16 @@
                             console.log(JSON.stringify(msg));
                         }
                     };
-                    websocket.onclose = function (evt) {
-                        debug("DISCONNECTED");
-                    };
                     websocket.onmessage = function (evt) {
                         console.log("recived");
                         var msg = JSON.parse(evt.data);
-                        debug( msg.source );
+                        debugTextArea.value = msg.source;
                     };
                     websocket.onerror = function (evt) {
-                        debug('ERROR: ' + evt.data);
+                        debugTextArea.value = 'ERROR: ' + evt.data;
                     };
                 } catch (exception) {
-                    debug('ERROR: ' + exception);
+                    debugTextArea.value = 'ERROR: ' + exception;
                 }
             }
 
@@ -89,9 +81,6 @@
                             break;
                         }
                     }
-                    debug("WebSocket state = " + websocket.readyState + " ( " + stateStr + " )");
-                } else {
-                    debug("WebSocket is null");
                 }
             }
         </script>
