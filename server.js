@@ -24,9 +24,15 @@ wsServer.on('request', function(request) {
   //connection event handler
   connection.on('message', function(message) {
     var msg = JSON.parse(message.utf8Data);
-    fs.writeFile('/home/ten/aaa.c', msg.source, (err) => {if (err) console.log(err) } );
+    var lang = msg.language;
+    var command = null;
+    if (lang == 'C')
+      command == 'gcc'
+    if (lang == 'Haskell')
+      command == 'ghc'
+    fs.writeFile('/home/ten/aaa', msg.source, (err) => {if (err) console.log(err) } );
     //compile source and execute output program
-    exec('cd && gcc aaa.c', (err, stdout, stderr) => {
+    exec('cd && ' + command + ' aaa -o a.out', (err, stdout, stderr) => {
       if (err) {
         console.log(err);
         msg.source = stderr;
