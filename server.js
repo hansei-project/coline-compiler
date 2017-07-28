@@ -35,7 +35,7 @@ wsServer.on('request', function(request) {
       command = 'ghc';
       extention = 'hs';
     }
-    fs.writeFile('/home/ten/aaa.' + extention, msg.source, (err) => {if (err) console.log(err) } );
+    fs.writeFile('/home/pi/aaa.' + extention, msg.source, (err) => {if (err) console.log(err) } );
     //compile source and execute output program
     exec('cd && ' + command + ' aaa.' + extention + ' -o a.out', (err, stdout, stderr) => {
       if (err) {

@@ -34,7 +34,7 @@
                         WebSocket = MozWebSocket;
                     if ( websocket && websocket.readyState == 1 )
                         websocket.close();
-                    websocket = new WebSocket( "ws://127.0.0.1:8080" );
+                    websocket = new WebSocket( "ws://ten.iptime.org:8080" );
                     websocket.onopen = function (evt) {
                         var msg = {
                             language : document.getElementById("language").value,
