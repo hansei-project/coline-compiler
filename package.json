@@ -1,25 +1,19 @@
 {
   "name": "coline-compiler",
-  "version": "1.0.0",
-  "description": "compile code in web browser",
-  "main": "server.js",
-  "dependencies": {
-    "websocket": "^1.0.24",
-    "child_process": "^1.0.2"
-  },
-  "devDependencies": {},
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hansei-project/coline-compiler.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hansei-project/coline-compiler/issues"
-  },
-  "homepage": "https://github.com/hansei-project/coline-compiler#readme"
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
+    "websocket": "~1.0.24",
+    "child_process": "~1.0.2"
+  }
 }
