@@ -47,24 +47,19 @@ wsServer.on('request', function(request) {
       command = 'ghc';
       extention = 'hs';
     }
-    fs.writeFile('/home/pi/aaa.' + extention, msg.source, (err) => {if (err) console.log(err) } );
     //compile source and execute output program
-    exec('cd && ' + command + ' aaa.' + extention + ' -o a.out', (err, stdout, stderr) => {
+    exec(`docker run asdf/compiler:CHs /bin/bash -c "echo "${msg.source}" > a.${extention}; `
+        + `${command} a.${extention} -o a.out; ` + `./a.out`, (err, stdout, stderr) => {
       if (err) {
         console.log(err);
         msg.source = stderr;
         connection.sendUTF(JSON.stringify(msg));
         return;
       }
-      exec('cd &&  ./a.out', (err, stdout, stderr) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        msg.source = stdout;
-        connection.sendUTF(JSON.stringify(msg));
-      });
+      msg.source = stdout;
+      connection.sendUTF(JSON.stringify(msg));
     });
+    exec(` docker rm $(docker ps --filter 'status=exited' -a -q)`, (err,stdout,stderr) => {});
   });
 
   connection.on('close', function(connection) {
