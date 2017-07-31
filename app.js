@@ -1,6 +1,6 @@
 var WebSocketServer = require('websocket').server;
 
-const { exec } = require('child_process');
+var exec = require('child-process-promise').exec;
 
 var fs = require('fs');
 
@@ -47,20 +47,25 @@ wsServer.on('request', function(request) {
       command = 'ghc';
       extention = 'hs';
     }
-    var cmd = `docker run asdf/compiler:CHs /bin/bash -c """echo '${msg.source}' > a.${extention}; `
-        + `${command} a.${extention} -o a.out; ./a.out"""`;
+    var containerName = 'vm' + (New Date()).getMilliseconds();
+    fs.writeFileSync('/home/pi/a.' + extention, msg.source);
     //compile source and execute output program
-    exec(cmd, (err, stdout, stderr) => {
-      if (err) {
-        console.log(err);
-        msg.source = stderr;
-        connection.sendUTF(JSON.stringify(msg));
-        return;
-      }
-      msg.source = stdout;
-      connection.sendUTF(JSON.stringify(msg));
-    });
-    exec(` docker rm $(docker ps --filter 'status=exited' -a -q)`, (err,stdout,stderr) => {});
+    exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
+      .then((result) => {
+        return exec(`docker cp /home/pi/a.${extention} ${containerName}:/root/`);
+      })
+      .then((result) => {
+        return exec(`docker exec gcc /root/a.${extention} -o /root/a.out`);
+      })
+      .then((result) => {
+        var stderr = result.stderr;
+        if (stderr)
+          connection.sendUTF(stderr);
+        else
+          exec(`docker exec ./root/a.out`)
+            .then((result) => connection.sendUTF(result.stdout));
+      })
+
   });
 
   connection.on('close', function(connection) {
