@@ -47,6 +47,7 @@ wsServer.on('request', function(request) {
       command = 'ghc';
       extention = 'hs';
     }
+    
     var containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
     fs.writeFileSync(`'/home/pi/${containerName}.${extention}`, msg.source);
     //compile source and execute output program
