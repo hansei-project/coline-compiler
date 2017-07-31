@@ -48,14 +48,14 @@ wsServer.on('request', function(request) {
       extention = 'hs';
     }
     var containerName = 'vm' + (New Date()).getMilliseconds();
-    fs.writeFileSync('/home/pi/a.' + extention, msg.source);
+    fs.writeFileSync(`'/home/pi/${containerName}.${extention}`, msg.source);
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {
         return exec(`docker cp /home/pi/a.${extention} ${containerName}:/root/`);
       })
       .then((result) => {
-        return exec(`docker exec gcc /root/a.${extention} -o /root/a.out`);
+        return exec(`docker exec gcc /root/${containerName}.${extention} -o /root/a.out`);
       })
       .then((result) => {
         var stderr = result.stderr;
@@ -64,7 +64,7 @@ wsServer.on('request', function(request) {
         else
           exec(`docker exec ./root/a.out`)
             .then((result) => connection.sendUTF(result.stdout));
-      })
+      });
 
   });
 
