@@ -47,9 +47,10 @@ wsServer.on('request', function(request) {
       command = 'ghc';
       extention = 'hs';
     }
+    var cmd = `docker run asdf/compiler:CHs /bin/bash -c """echo '${msg.source}' > a.${extention}; `
+        + `${command} a.${extention} -o a.out; ./a.out"""`;
     //compile source and execute output program
-    exec(`docker run asdf/compiler:CHs /bin/bash -c "echo "${msg.source}" > a.${extention}; `
-        + `${command} a.${extention} -o a.out; ` + `./a.out`, (err, stdout, stderr) => {
+    exec(cmd, (err, stdout, stderr) => {
       if (err) {
         console.log(err);
         msg.source = stderr;
