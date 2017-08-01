@@ -14,8 +14,8 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
-var server = app.listen(3000, function(){
-    console.log("Express server has started on port 3000")
+var server = app.listen(4000, function(){
+    console.log("Express server has started on port 4000")
 });
 
 var server = http.createServer(function(request, response) {
@@ -49,22 +49,35 @@ wsServer.on('request', function(request) {
     }
     
     var containerName = `vm${(new Date()).getSeconds()}_${(new Date()).getMilliseconds()}`;
-    fs.writeFileSync(`'/home/pi/${containerName}.${extention}`, msg.source);
+    fs.writeFileSync(`/home/pi/${containerName}.${extention}`, msg.source);
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {
-        return exec(`docker cp /home/pi/a.${extention} ${containerName}:/root/`);
+        console.log('make source...');
+        return exec(`docker cp /home/pi/${containerName}.${extention} ${containerName}:/root/`);
       })
       .then((result) => {
-        return exec(`docker exec gcc /root/${containerName}.${extention} -o /root/a.out`);
+        console.log('compile...');
+        return exec(`docker exec ${containerName} gcc /root/${containerName}.${extention} -o /root/a.out`);
       })
       .then((result) => {
         var stderr = result.stderr;
-        if (stderr)
+	if (stderr != "") {
+          console.log('Error!');
           connection.sendUTF(stderr);
-        else
-          exec(`docker exec ./root/a.out`)
-            .then((result) => connection.sendUTF(result.stdout));
+        }
+        else {
+          console.log('executing...')
+          return exec(`docker exec ${containerName} ./root/a.out`)
+            .then((result) => {
+              console.log(result.stdout);
+              connection.sendUTF(result.stdout);
+            });
+        }
+      })
+      .then((result) => {
+        console.log('finish!');
+        exec(`docker stop ${containerName}; docker rm ${containerName}`);
       });
 
   });
