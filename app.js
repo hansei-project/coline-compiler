@@ -53,22 +53,18 @@ wsServer.on('request', function(request) {
     //compile source and execute output program
     exec(`docker run -dt --name ${containerName} asdf/compiler:CHs /bin/bash`)
       .then((result) => {
-        console.log('make source...');
-        return exec(`docker cp /home/pi/${containerName}.${extention} ${containerName}:/root/`);
+        exec(`docker cp /home/pi/${containerName}.${extention} ${containerName}:/root/`);
       })
       .then((result) => {
-        console.log('compile...');
-        return exec(`docker exec ${containerName} gcc /root/${containerName}.${extention} -o /root/a.out`);
+        exec(`docker exec ${containerName} gcc /root/${containerName}.${extention} -o /root/a.out`);
       })
       .then((result) => {
         var stderr = result.stderr;
 	if (stderr != "") {
-          console.log('Error!');
           connection.sendUTF(stderr);
         }
         else {
-          console.log('executing...')
-          return exec(`docker exec ${containerName} ./root/a.out`)
+          exec(`docker exec ${containerName} ./root/a.out`)
             .then((result) => {
               console.log(result.stdout);
               connection.sendUTF(result.stdout);
@@ -77,7 +73,7 @@ wsServer.on('request', function(request) {
       })
       .then((result) => {
         console.log('finish!');
-        exec(`docker stop ${containerName}; docker rm ${containerName}`);
+        exec(`docker stop ${containerName}; docker rm ${containerName}; rm /home/pi/${containerName}.*`);
       });
 
   });
