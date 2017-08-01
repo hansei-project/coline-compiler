@@ -49,8 +49,7 @@
                     };
                     websocket.onmessage = function (evt) {
                         console.log("recived");
-                        var msg = JSON.parse(evt.data);
-                        debugTextArea.value = msg.source;
+                        debugTextArea.value = evt.data;
                     };
                     websocket.onerror = function (evt) {
                         debugTextArea.value = 'ERROR: ' + evt.data;
