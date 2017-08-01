@@ -56,7 +56,7 @@ wsServer.on('request', function(request) {
         return exec(`docker cp /home/pi/${containerName}.${extention} ${containerName}:/root/`);
       })
       .then((result) => {
-        return exec(`docker exec ${containerName} gcc /root/${containerName}.${extention} -o /root/a.out`);
+        return exec(`docker exec ${containerName} ${command} /root/${containerName}.${extention} -o /root/a.out`);
       })
       .then((result) => {
         var stderr = result.stderr;
