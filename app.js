@@ -60,13 +60,13 @@ wsServer.on('request', function(request) {
       })
       .then((result) => {
         var stderr = result.stderr;
-	if (stderr != "") {
+	      if (stderr != "") {
           connection.sendUTF(stderr);
         }
         else {
-          exec(`docker exec ${containerName} ./root/a.out`)
+          return exec(`docker exec ${containerName} ./root/a.out`)
             .then((result) => {
-              return connection.sendUTF(result.stdout);
+              connection.sendUTF(result.stdout);
             });
         }
       })
